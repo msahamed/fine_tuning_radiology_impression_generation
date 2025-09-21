@@ -1,6 +1,11 @@
 *.log
-node_modules/
 .env
 __pycache__/
 *.pyc
 *.csv
+*.zip
+*.jsonl
+processed_data/
+*.txt
+processed_data.zip
+sirona_medical.zip
