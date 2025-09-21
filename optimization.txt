@@ -1,0 +1,52 @@
+Multi-Objective Training Framework
+
+  Weighted Loss Function:
+  Total Loss = α × CrossEntropy + β × (1-ROUGE) + γ × Style_Loss + δ × Clinical_Loss
+
+  Where you can incorporate:
+  - Style Consistency Loss: Train embeddings to match clinic-specific writing patterns
+  - Clinical Completeness Loss: Ensure key findings mentioned in input appear in impression
+  - Uncertainty Calibration Loss: Penalize inappropriate confidence levels
+
+  Context-Aware Single Model Approaches
+
+  1. Prefix/Instruction Tuning:
+  Input: "[CLINIC: clinic_1] [MODALITY: MR] [ANATOMY: knee] FINDINGS: ..."
+  Target: "IMPRESSION: ..."
+  This allows the model to adapt style while remaining unified.
+
+  2. Embedding Conditioning:
+  - Add learnable clinic/modality embeddings to input
+  - Model learns to modulate output style based on context vectors
+  - More elegant than explicit prefixes
+
+  3. Multi-Task Learning:
+  - Primary task: Generate impression
+  - Auxiliary tasks: Predict clinic style, modality type, anatomy
+  - Shared representations improve generalization while maintaining specificity
+
+  Radiologist-Centric Metric Integration
+
+  During Training:
+  - Reinforcement Learning from Human Feedback (RLHF): Use radiologist preferences as reward signal
+  - Contrastive Learning: Train model to distinguish good vs. poor impressions from same findings
+  - Style Transfer Objectives: Learn to maintain clinical accuracy while adapting to institutional voice
+
+  Custom Evaluation Framework:
+  def radiologist_score(impression, reference, context):
+      return (
+          0.3 * rouge_score(impression, reference) +
+          0.2 * clinical_completeness(impression, findings) +
+          0.2 * style_consistency(impression, clinic_id) +
+          0.2 * appropriate_uncertainty(impression) +
+          0.1 * length_appropriateness(impression)
+      )
+
+  Implementation Strategy
+
+  Phase 1: Train unified model with context tokens and multi-objective loss
+  Phase 2: Add human preference learning through radiologist feedback
+  Phase 3: Fine-tune with reinforcement learning using composite radiologist-centric reward
+
+  This approach gives you the scalability of a single model while maintaining the clinical relevance and style adaptation that radiologists value.
+  The key is making the context (clinic, modality, anatomy) an explicit part of the model's conditioning rather than requiring separate models.
